@@ -355,6 +355,9 @@
         <h1 style="color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink);">SYSTEM CRASH</h1>
         <div id="final-score" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--neon-blue); font-weight: 900;">0</div>
         <div id="new-best" style="color: var(--neon-pink); margin-bottom: 2rem; font-weight: bold; letter-spacing: 2px;" class="hidden">NEW RECORD!</div>
+        <div id="revive-container" style="margin-bottom: 1rem;">
+            <button class="btn" id="revive-btn" style="border-color: #ffd700; background: rgba(255, 215, 0, 0.1); color: #ffd700; font-size: 1.2rem; padding: 15px 30px;" data-testid="button-revive">REVIVE (WATCH AD)</button>
+        </div>
         <button class="btn" id="restart-btn" data-testid="button-restart">REBOOT</button>
     </div>
 
@@ -477,6 +480,8 @@ const Game = (() => {
     const shopCurrencyText = document.getElementById('shop-currency-text');
     const finalScoreDisplay = document.getElementById('final-score');
     const newBestLabel = document.getElementById('new-best');
+    const reviveBtn = document.getElementById('revive-btn');
+    const reviveContainer = document.getElementById('revive-container');
 
     const skins = [
         { id: 'default', name: 'Cyan', color: '#00f2ff', price: 0 },
@@ -500,6 +505,7 @@ const Game = (() => {
     let obstacles = [];
     let particles = [];
     let shake = 0;
+    let canRevive = true;
     
     const player = {
         x: 0,
@@ -608,6 +614,7 @@ const Game = (() => {
         player.x = canvas.width / 2;
         player.targetX = player.x;
         state = 'PLAYING';
+        canRevive = true;
         AudioEngine.playStart();
         
         startScreen.classList.add('hidden');
@@ -617,6 +624,23 @@ const Game = (() => {
         multiplierText.innerText = `LEVEL ${level}`;
         highScoreText.innerText = `BEST: ${Math.floor(highScore)}`;
     };
+
+    const revive = () => {
+        state = 'PLAYING';
+        obstacles = []; // Clear current obstacles to give player a chance
+        player.x = canvas.width / 2;
+        player.targetX = player.x;
+        canRevive = false; // Only one revive per run
+        gameOverScreen.classList.add('hidden');
+        hud.classList.remove('hidden');
+        AudioEngine.playStart();
+    };
+
+    reviveBtn.addEventListener('click', () => {
+        AdsSystem.showRewarded(() => {
+            revive();
+        });
+    });
 
     const update = () => {
         if (state === 'SHOP') return;
@@ -692,6 +716,11 @@ const Game = (() => {
                 const showGameOver = () => {
                     gameOverScreen.classList.remove('hidden');
                     finalScoreDisplay.innerText = Math.floor(score);
+                    if (canRevive) {
+                        reviveContainer.classList.remove('hidden');
+                    } else {
+                        reviveContainer.classList.add('hidden');
+                    }
                 };
 
                 const adChance = Math.random();
