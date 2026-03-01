@@ -19,6 +19,7 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none;
         }
 
         body, html {
@@ -38,6 +39,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            background: radial-gradient(circle at center, #101010 0%, #050505 100%);
         }
 
         canvas {
@@ -45,7 +47,7 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.1));
         }
 
         /* UI Layers */
@@ -59,8 +61,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            background: rgba(0, 0, 0, 0.8);
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
             transition: opacity 0.3s ease;
         }
 
@@ -72,97 +75,157 @@
 
         /* Menu Styles */
         h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 0.5rem;
             text-transform: uppercase;
-            letter-spacing: 8px;
+            letter-spacing: 12px;
             color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+            text-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue);
             text-align: center;
+            font-weight: 900;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: clamp(0.9rem, 3vw, 1.4rem);
             color: var(--neon-pink);
             margin-bottom: 2.5rem;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            font-weight: 600;
         }
 
         .btn {
-            padding: 18px 50px;
-            font-size: 1.6rem;
-            background: transparent;
+            padding: 20px 60px;
+            font-size: 1.8rem;
+            background: rgba(255, 0, 234, 0.1);
             color: var(--text-light);
-            border: 3px solid var(--neon-pink);
+            border: 2px solid var(--neon-pink);
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.2s;
+            letter-spacing: 4px;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             margin: 15px;
-            font-weight: bold;
-            border-radius: 4px;
+            font-weight: 900;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 0, 234, 0.2);
         }
 
         .btn:hover, .btn:active {
             background: var(--neon-pink);
-            box-shadow: 0 0 30px var(--neon-pink);
-            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--neon-pink);
+            transform: scale(1.05) translateY(-2px);
+            color: white;
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .stats-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .score-display {
-            position: absolute;
-            top: 25px;
-            left: 25px;
             font-size: 1.8rem;
             color: var(--neon-blue);
-            text-shadow: 0 0 8px var(--neon-blue);
-            z-index: 5;
-            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-blue);
+            font-weight: 900;
             letter-spacing: 2px;
         }
 
-        .multiplier-display {
-            position: absolute;
-            top: 65px;
-            left: 25px;
-            font-size: 1.1rem;
-            color: var(--neon-pink);
-            z-index: 5;
+        .high-score-display {
+            font-size: 0.9rem;
+            color: rgba(0, 242, 255, 0.6);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
+        .multiplier-display {
+            font-size: 1.2rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: right;
+        }
+
         .instructions {
             margin-top: 3rem;
-            font-size: 1rem;
-            color: #aaa;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
             text-align: center;
-            line-height: 1.6;
+            line-height: 1.8;
+            max-width: 80%;
+        }
+
+        .instructions strong {
+            color: var(--neon-blue);
         }
 
         /* Mobile Controls Overlay */
-        #mobile-hint {
+        #mobile-controls {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             width: 100%;
             display: none;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 15;
             pointer-events: none;
         }
 
+        .control-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 242, 255, 0.15);
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+            transition: all 0.1s;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        .control-btn:active {
+            background: var(--neon-blue);
+            transform: scale(0.9);
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+
+        .control-btn svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
         @media (max-width: 768px) {
-            h1 { font-size: 2.2rem; }
-            .subtitle { font-size: 0.9rem; }
-            #mobile-hint { display: flex; }
-            .score-display { font-size: 1.4rem; top: 15px; left: 15px; }
-            .multiplier-display { font-size: 0.9rem; top: 45px; left: 15px; }
+            #mobile-controls { display: flex; }
+            .instructions { display: none; }
+            #hud { padding: 15px; }
+            .score-display { font-size: 1.4rem; }
+            .multiplier-display { font-size: 1rem; }
+        }
+
+        @media (min-width: 769px) {
+            /* Desktop hover effects */
+            .control-btn { display: none; }
         }
     </style>
 </head>
@@ -170,13 +233,23 @@
 
 <div id="game-container">
     <div id="hud" class="hidden">
-        <div class="score-display" id="score-text">SCORE: 0</div>
+        <div class="stats-group">
+            <div class="score-display" id="score-text">0</div>
+            <div class="high-score-display" id="high-score-text">BEST: 0</div>
+        </div>
         <div class="multiplier-display" id="multiplier-text">LEVEL 1</div>
     </div>
     
     <canvas id="gameCanvas"></canvas>
 
-    <div id="mobile-hint">Tap sides to move</div>
+    <div id="mobile-controls">
+        <div class="control-btn" id="left-btn">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </div>
+        <div class="control-btn" id="right-btn">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>
+    </div>
 
     <!-- Start Screen -->
     <div id="start-screen" class="ui-layer">
@@ -184,15 +257,16 @@
         <div class="subtitle">Cyber Dash Protocol</div>
         <button class="btn" id="start-btn" data-testid="button-start">START DASH</button>
         <div class="instructions">
-            <strong>PC:</strong> ARROW KEYS or WASD to move<br>
-            <strong>MOBILE:</strong> TAP LEFT/RIGHT SIDES
+            <strong>PC:</strong> ARROW KEYS or WASD to navigate<br>
+            <strong>MOBILE:</strong> USE ON-SCREEN BUTTONS
         </div>
     </div>
 
     <!-- Game Over Screen -->
     <div id="game-over-screen" class="ui-layer hidden">
-        <h1 style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">CRASHED!</h1>
-        <div id="final-score" style="font-size: 2.5rem; margin-bottom: 2rem; color: var(--neon-blue);">SCORE: 0</div>
+        <h1 style="color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink);">SYSTEM CRASH</h1>
+        <div id="final-score" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--neon-blue); font-weight: 900;">0</div>
+        <div id="new-best" style="color: var(--neon-pink); margin-bottom: 2rem; font-weight: bold; letter-spacing: 2px;" class="hidden">NEW RECORD!</div>
         <button class="btn" id="restart-btn" data-testid="button-restart">REBOOT</button>
     </div>
 </div>
@@ -200,8 +274,6 @@
 <script>
 /**
  * NEON NEXUS: CYBER DASH
- * A high-performance, responsive canvas game.
- * Complies with CrazyGames requirements: Single file, no external assets, mobile-ready.
  */
 
 // --- UTILITIES & AUDIO ---
@@ -238,7 +310,7 @@ const AudioEngine = (() => {
     return {
         init,
         playStart: () => playTone(440, 0.3, 'sine'),
-        playScore: () => playTone(880, 0.05, 'sine', 0.03),
+        playScore: () => playTone(880, 0.05, 'sine', 0.02),
         playCrash: () => playTone(100, 0.6, 'sawtooth', 0.2),
         playLevelUp: () => {
             playTone(523.25, 0.1);
@@ -254,18 +326,22 @@ const Game = (() => {
     const ctx = canvas.getContext('2d');
     const hud = document.getElementById('hud');
     const scoreText = document.getElementById('score-text');
+    const highScoreText = document.getElementById('high-score-text');
     const multiplierText = document.getElementById('multiplier-text');
     const startScreen = document.getElementById('start-screen');
     const gameOverScreen = document.getElementById('game-over-screen');
     const finalScoreDisplay = document.getElementById('final-score');
+    const newBestLabel = document.getElementById('new-best');
 
     let state = 'MENU';
     let score = 0;
+    let highScore = parseInt(localStorage.getItem('neon_nexus_high_score') || '0');
     let level = 1;
-    let speed = 6;
+    let speed = 7;
     let frame = 0;
     let obstacles = [];
     let particles = [];
+    let shake = 0;
     
     const player = {
         x: 0,
@@ -273,7 +349,8 @@ const Game = (() => {
         width: 40,
         height: 40,
         targetX: 0,
-        color: '#00f2ff'
+        color: '#00f2ff',
+        trail: []
     };
 
     const resize = () => {
@@ -284,14 +361,14 @@ const Game = (() => {
         player.y = canvas.height * 0.8;
         player.targetX = player.x;
         
-        // Adjust player size for mobile
         if (canvas.width < 500) {
-            player.width = 30;
-            player.height = 30;
+            player.width = 34;
+            player.height = 34;
         } else {
-            player.width = 40;
-            player.height = 40;
+            player.width = 44;
+            player.height = 44;
         }
+        highScoreText.innerText = `BEST: ${Math.floor(highScore)}`;
     };
 
     window.addEventListener('resize', resize);
@@ -299,64 +376,55 @@ const Game = (() => {
 
     // Controls
     const keys = {};
-    window.addEventListener('keydown', e => {
-        keys[e.key] = true;
-        keys[e.key.toLowerCase()] = true;
-    });
-    window.addEventListener('keyup', e => {
-        keys[e.key] = false;
-        keys[e.key.toLowerCase()] = false;
-    });
-    
-    // Mobile touch
-    const handleTouch = (e) => {
-        if (state !== 'PLAYING') return;
-        const touchX = e.touches[0].clientX;
-        if (touchX < window.innerWidth / 2) {
-            keys['left'] = true;
-            keys['right'] = false;
-        } else {
-            keys['right'] = true;
-            keys['left'] = false;
-        }
+    const setKey = (k, v) => {
+        keys[k] = v;
+        keys[k.toLowerCase()] = v;
+        if (k === 'ArrowLeft' || k === 'a') keys['left'] = v;
+        if (k === 'ArrowRight' || k === 'd') keys['right'] = v;
     };
 
-    canvas.addEventListener('touchstart', e => {
-        e.preventDefault();
-        handleTouch(e);
-    }, { passive: false });
+    window.addEventListener('keydown', e => setKey(e.key, true));
+    window.addEventListener('keyup', e => setKey(e.key, false));
+    
+    // Mobile buttons
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
 
-    canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        handleTouch(e);
-    }, { passive: false });
+    const bindMobileBtn = (btn, key) => {
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }, {passive: false});
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }, {passive: false});
+        btn.addEventListener('mousedown', () => keys[key] = true);
+        btn.addEventListener('mouseup', () => keys[key] = false);
+        btn.addEventListener('mouseleave', () => keys[key] = false);
+    };
 
-    canvas.addEventListener('touchend', e => {
-        keys['left'] = false;
-        keys['right'] = false;
-    });
+    bindMobileBtn(leftBtn, 'left');
+    bindMobileBtn(rightBtn, 'right');
 
     const createObstacle = () => {
-        const width = Math.random() * (canvas.width * 0.3) + 60;
+        const minWidth = canvas.width < 500 ? 50 : 80;
+        const maxWidth = canvas.width < 500 ? canvas.width * 0.4 : canvas.width * 0.25;
+        const width = Math.random() * (maxWidth - minWidth) + minWidth;
         obstacles.push({
             x: Math.random() * (canvas.width - width),
-            y: -50,
+            y: -60,
             width: width,
             height: 25,
-            color: Math.random() > 0.5 ? '#ff00ea' : '#9d00ff'
+            color: Math.random() > 0.5 ? '#ff00ea' : '#9d00ff',
+            passed: false
         });
     };
 
-    const createExplosion = (x, y, color) => {
-        for (let i = 0; i < 20; i++) {
+    const createExplosion = (x, y, color, count = 25) => {
+        for (let i = 0; i < count; i++) {
             particles.push({
                 x, y,
-                vx: (Math.random() - 0.5) * 15,
-                vy: (Math.random() - 0.5) * 15,
+                vx: (Math.random() - 0.5) * 20,
+                vy: (Math.random() - 0.5) * 20,
                 life: 1.0,
-                decay: Math.random() * 0.02 + 0.01,
+                decay: Math.random() * 0.03 + 0.015,
                 color,
-                size: Math.random() * 4 + 2
+                size: Math.random() * 5 + 2
             });
         }
     };
@@ -365,10 +433,12 @@ const Game = (() => {
         AudioEngine.init();
         score = 0;
         level = 1;
-        speed = 7;
+        speed = 8;
         frame = 0;
         obstacles = [];
         particles = [];
+        shake = 0;
+        player.trail = [];
         player.x = canvas.width / 2;
         player.targetX = player.x;
         state = 'PLAYING';
@@ -376,34 +446,50 @@ const Game = (() => {
         
         startScreen.classList.add('hidden');
         gameOverScreen.classList.add('hidden');
+        newBestLabel.classList.add('hidden');
         hud.classList.remove('hidden');
         multiplierText.innerText = `LEVEL ${level}`;
+        highScoreText.innerText = `BEST: ${Math.floor(highScore)}`;
     };
 
     const update = () => {
         if (state !== 'PLAYING') return;
 
         frame++;
+        if (shake > 0) shake *= 0.9;
         
         // Player Movement
-        const moveSpeed = canvas.width < 500 ? 12 : 15;
-        if (keys['ArrowLeft'] || keys['a'] || keys['left']) player.targetX -= moveSpeed;
-        if (keys['ArrowRight'] || keys['d'] || keys['right']) player.targetX += moveSpeed;
+        const moveAcc = canvas.width < 500 ? 1.8 : 2.5;
+        const friction = 0.85;
         
-        // Bounds
+        let dx = 0;
+        if (keys['left']) dx -= moveAcc;
+        if (keys['right']) dx += moveAcc;
+        
+        player.targetX += dx;
         player.targetX = Math.max(player.width/2, Math.min(canvas.width - player.width/2, player.targetX));
-        player.x += (player.targetX - player.x) * 0.25;
+        
+        // Smooth lerping with momentum
+        player.x += (player.targetX - player.x) * 0.2;
+
+        // Trail effect
+        if (frame % 2 === 0) {
+            player.trail.unshift({ x: player.x, y: player.y, life: 1.0 });
+            if (player.trail.length > 10) player.trail.pop();
+        }
+        player.trail.forEach(t => t.life -= 0.1);
 
         // Difficulty Progression
-        if (frame % 600 === 0) {
+        if (frame % 800 === 0) {
             level++;
-            speed += 0.8;
+            speed += 1.0;
             AudioEngine.playLevelUp();
             multiplierText.innerText = `LEVEL ${level}`;
+            shake = 10;
         }
 
         // Obstacles
-        const spawnRate = Math.max(15, 50 - (level * 2));
+        const spawnRate = Math.max(12, 45 - (level * 2));
         if (frame % spawnRate === 0) {
             createObstacle();
         }
@@ -412,11 +498,11 @@ const Game = (() => {
             const o = obstacles[i];
             o.y += speed;
 
-            // Collision detection with padding for fairness
-            const pX = player.x - player.width/2 + 5;
-            const pW = player.width - 10;
-            const pY = player.y - player.height/2 + 5;
-            const pH = player.height - 10;
+            // Collision detection with tight hitbox
+            const pX = player.x - player.width/2 + 8;
+            const pW = player.width - 16;
+            const pY = player.y - player.height/2 + 8;
+            const pH = player.height - 16;
 
             if (
                 pX < o.x + o.width &&
@@ -425,18 +511,30 @@ const Game = (() => {
                 pY + pH > o.y
             ) {
                 state = 'GAMEOVER';
+                shake = 30;
                 AudioEngine.playCrash();
-                createExplosion(player.x, player.y, player.color);
-                createExplosion(player.x, player.y, o.color);
+                createExplosion(player.x, player.y, player.color, 40);
+                createExplosion(player.x, player.y, o.color, 40);
+                
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('neon_nexus_high_score', Math.floor(highScore).toString());
+                    newBestLabel.classList.remove('hidden');
+                }
+                
                 gameOverScreen.classList.remove('hidden');
-                finalScoreDisplay.innerText = `SCORE: ${Math.floor(score)}`;
+                finalScoreDisplay.innerText = Math.floor(score);
                 return;
             }
 
-            if (o.y > canvas.height) {
-                obstacles.splice(i, 1);
-                score += 50;
+            if (!o.passed && o.y > player.y) {
+                o.passed = true;
+                score += 100 * level;
                 AudioEngine.playScore();
+            }
+
+            if (o.y > canvas.height + 100) {
+                obstacles.splice(i, 1);
             }
         }
 
@@ -449,32 +547,45 @@ const Game = (() => {
             if (p.life <= 0) particles.splice(i, 1);
         }
 
-        score += 0.5 * level; // Time-based score
-        scoreText.innerText = `SCORE: ${Math.floor(score)}`;
+        score += (speed / 10) * level; 
+        scoreText.innerText = Math.floor(score);
     };
 
     const draw = () => {
+        ctx.save();
+        if (shake > 0) {
+            ctx.translate((Math.random()-0.5)*shake, (Math.random()-0.5)*shake);
+        }
+
         ctx.fillStyle = '#050505';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Background Dynamic Grid
-        ctx.strokeStyle = 'rgba(0, 242, 255, 0.08)';
+        // Dynamic Grid
+        ctx.strokeStyle = 'rgba(0, 242, 255, 0.1)';
         ctx.lineWidth = 1;
-        const spacing = 60;
-        const offset = (frame * speed * 0.5) % spacing;
+        const spacing = 70;
+        const offset = (frame * speed * 0.4) % spacing;
         
-        for (let x = 0; x < canvas.width; x += spacing) {
-            ctx.beginPath();
+        ctx.beginPath();
+        for (let x = 0; x <= canvas.width; x += spacing) {
             ctx.moveTo(x, 0);
             ctx.lineTo(x, canvas.height);
-            ctx.stroke();
         }
-        for (let y = offset; y < canvas.height; y += spacing) {
-            ctx.beginPath();
+        for (let y = offset; y <= canvas.height; y += spacing) {
             ctx.moveTo(0, y);
             ctx.lineTo(canvas.width, y);
-            ctx.stroke();
         }
+        ctx.stroke();
+
+        // Trail
+        player.trail.forEach(t => {
+            ctx.globalAlpha = t.life * 0.4;
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, (player.width/2) * t.life, 0, Math.PI*2);
+            ctx.fill();
+        });
+        ctx.globalAlpha = 1.0;
 
         // Draw Particles
         particles.forEach(p => {
@@ -493,10 +604,9 @@ const Game = (() => {
             ctx.fillStyle = o.color;
             ctx.fillRect(o.x, o.y, o.width, o.height);
             
-            // Add a "core" glow
             ctx.fillStyle = '#ffffff';
-            ctx.globalAlpha = 0.3;
-            ctx.fillRect(o.x + 5, o.y + 5, o.width - 10, o.height - 10);
+            ctx.globalAlpha = 0.2;
+            ctx.fillRect(o.x + 2, o.y + 2, o.width - 4, o.height - 4);
             ctx.globalAlpha = 1.0;
         });
 
@@ -505,36 +615,37 @@ const Game = (() => {
             const drawX = state === 'MENU' ? canvas.width / 2 : player.x;
             const drawY = state === 'MENU' ? canvas.height * 0.8 : player.y;
 
-            ctx.shadowBlur = 25;
+            ctx.shadowBlur = 30;
             ctx.shadowColor = player.color;
             ctx.fillStyle = player.color;
             
-            // Cyber Ship Shape
+            // Neon Ship
             ctx.beginPath();
             ctx.moveTo(drawX, drawY - player.height/2);
             ctx.lineTo(drawX - player.width/2, drawY + player.height/2);
-            ctx.lineTo(drawX, drawY + player.height/3);
+            ctx.lineTo(drawX, drawY + player.height/4);
             ctx.lineTo(drawX + player.width/2, drawY + player.height/2);
             ctx.closePath();
             ctx.fill();
             
-            // Internal Detail
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.moveTo(drawX, drawY - player.height/4);
-            ctx.lineTo(drawX - 5, drawY + 5);
-            ctx.lineTo(drawX + 5, drawY + 5);
+            ctx.moveTo(drawX, drawY - player.height/3);
+            ctx.lineTo(drawX - 4, drawY + 2);
+            ctx.lineTo(drawX + 4, drawY + 2);
             ctx.closePath();
             ctx.fill();
             
-            // Engine Glow
-            const enginePulse = Math.sin(frame * 0.2) * 10 + 20;
-            ctx.shadowBlur = enginePulse;
+            // Engine
+            const engineH = Math.sin(frame * 0.4) * 8 + 12;
             ctx.fillStyle = 'rgba(255, 0, 234, 0.8)';
-            ctx.fillRect(drawX - 10, drawY + player.height/2, 20, 10);
+            ctx.shadowColor = 'rgba(255, 0, 234, 1)';
+            ctx.fillRect(drawX - 8, drawY + player.height/2 - 2, 16, engineH);
         }
 
+        ctx.restore();
         ctx.shadowBlur = 0;
+        
         requestAnimationFrame(() => {
             update();
             draw();
@@ -548,8 +659,12 @@ const Game = (() => {
     }};
 })();
 
-// Boot game
 Game.init();
+
+</script>
+</body>
+</html>
+
 
 </script>
 </body>
