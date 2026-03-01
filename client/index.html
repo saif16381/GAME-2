@@ -39,7 +39,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at center, #101010 0%, #050505 100%);
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+            overflow: hidden;
         }
 
         canvas {
@@ -47,7 +48,7 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.1));
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.15));
         }
 
         /* UI Layers */
@@ -62,62 +63,101 @@
             align-items: center;
             justify-content: center;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
-            transition: opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hidden {
-            display: none !important;
-            opacity: 0;
-            pointer-events: none;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
 
         /* Menu Styles */
         h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            margin-bottom: 0.5rem;
+            font-size: clamp(2.8rem, 10vw, 5rem);
+            margin-bottom: 0.2rem;
             text-transform: uppercase;
-            letter-spacing: 12px;
+            letter-spacing: clamp(8px, 2vw, 16px);
             color: var(--neon-blue);
-            text-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 40px rgba(0, 242, 255, 0.5);
             text-align: center;
             font-weight: 900;
+            line-height: 1.1;
         }
 
         .subtitle {
-            font-size: clamp(0.9rem, 3vw, 1.4rem);
+            font-size: clamp(0.8rem, 2.5vw, 1.2rem);
             color: var(--neon-pink);
-            margin-bottom: 2.5rem;
-            letter-spacing: 4px;
+            margin-bottom: 3rem;
+            letter-spacing: 6px;
             text-transform: uppercase;
             font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
         }
 
         .btn {
-            padding: 20px 60px;
-            font-size: 1.8rem;
-            background: rgba(255, 0, 234, 0.1);
+            width: 100%;
+            padding: 18px 40px;
+            font-size: 1.4rem;
+            background: rgba(255, 0, 234, 0.05);
             color: var(--text-light);
             border: 2px solid var(--neon-pink);
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 3px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            margin: 15px;
-            font-weight: 900;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(255, 0, 234, 0.2);
+            font-weight: 800;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 0, 234, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: rgba(255, 0, 234, 0.15);
+            border-width: 3px;
+            padding: 22px 40px;
+            font-size: 1.6rem;
+        }
+
+        .btn-secondary {
+            background: rgba(0, 242, 255, 0.05);
+            border-color: var(--neon-blue);
+            font-size: 1.2rem;
+        }
+
+        .btn-accent {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: #ffd700;
+            color: #ffd700;
+            font-size: 1.1rem;
         }
 
         .btn:hover, .btn:active {
-            background: var(--neon-pink);
-            box-shadow: 0 0 40px var(--neon-pink);
-            transform: scale(1.05) translateY(-2px);
-            color: white;
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 0 30px currentColor;
         }
+
+        .btn-primary:hover, .btn-primary:active { background: var(--neon-pink); color: white; }
+        .btn-secondary:hover, .btn-secondary:active { background: var(--neon-blue); color: #000; }
+        .btn-accent:hover, .btn-accent:active { background: #ffd700; color: #000; }
 
         /* HUD */
         #hud {
@@ -125,9 +165,10 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
+            padding: clamp(15px, 4vw, 25px);
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             pointer-events: none;
             z-index: 15;
         }
@@ -165,16 +206,20 @@
 
         /* Shop Styles */
         #shop-screen {
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(5, 5, 5, 0.98);
         }
 
         .shop-container {
-            width: 90%;
-            max-width: 500px;
+            width: 95%;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: clamp(15px, 3vw, 25px);
             margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .shop-header {
@@ -183,123 +228,172 @@
             align-items: center;
             width: 100%;
             padding: 0 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
         }
 
         .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(10px, 2vw, 20px);
             width: 100%;
+        }
+
+        @media (max-width: 480px) {
+            .shop-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .shop-item {
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 16px;
+            padding: clamp(12px, 3vw, 20px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .shop-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .shop-item.selected {
             border-color: var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue);
+            background: rgba(0, 242, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
         .shop-item.locked {
-            opacity: 0.7;
+            opacity: 0.8;
+        }
+
+        .shop-item.selected::after {
+            content: 'SELECTED';
+            position: absolute;
+            top: -10px;
+            font-size: 0.6rem;
+            background: var(--neon-blue);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
         }
 
         .skin-preview {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
+            width: clamp(30px, 8vw, 45px);
+            height: clamp(30px, 8vw, 45px);
+            border-radius: 8px;
+            box-shadow: 0 0 15px currentColor;
         }
 
         .item-price {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #ffd700;
-            font-weight: bold;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .item-name {
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .instructions {
             margin-top: 3rem;
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
             text-align: center;
-            line-height: 1.8;
+            line-height: 1.6;
             max-width: 80%;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 30px;
+            border-radius: 50px;
+            letter-spacing: 1px;
         }
 
         .instructions strong {
             color: var(--neon-blue);
+            margin-right: 5px;
         }
 
         /* Mobile Controls Overlay */
         #mobile-controls {
             position: absolute;
-            bottom: 30px;
+            bottom: max(30px, env(safe-area-inset-bottom));
             width: 100%;
             display: none;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 0 40px;
             z-index: 15;
             pointer-events: none;
         }
 
         .control-btn {
-            width: 80px;
-            height: 80px;
-            background: rgba(0, 242, 255, 0.15);
-            border: 2px solid var(--neon-blue);
-            border-radius: 50%;
+            width: 85px;
+            height: 85px;
+            background: rgba(0, 242, 255, 0.1);
+            border: 2px solid rgba(0, 242, 255, 0.3);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             pointer-events: auto;
-            backdrop-filter: blur(5px);
-            transition: all 0.1s;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .control-btn:active {
             background: var(--neon-blue);
-            transform: scale(0.9);
+            transform: scale(0.92) translateY(4px);
             box-shadow: 0 0 30px var(--neon-blue);
+            border-color: white;
         }
 
         .control-btn svg {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             fill: white;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
         }
 
         @media (max-width: 768px) {
             #mobile-controls { display: flex; }
             .instructions { display: none; }
-            #hud { padding: 15px; }
-            .score-display { font-size: 1.4rem; }
-            .multiplier-display { font-size: 1rem; }
+            #hud { padding: 20px; }
+            .score-display { font-size: 1.5rem; }
+            .multiplier-display { font-size: 0.9rem; }
         }
 
         @media (min-width: 769px) {
-            /* Desktop hover effects */
             .control-btn { display: none; }
+            .shop-item:hover { transform: translateY(-8px); }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .btn-primary {
+            animation: pulse 3s infinite ease-in-out;
         }
     </style>
 </head>
@@ -339,11 +433,22 @@
     <div id="start-screen" class="ui-layer">
         <h1>NEON NEXUS</h1>
         <div class="subtitle">Cyber Dash Protocol</div>
-        <button class="btn" id="start-btn" data-testid="button-start">START DASH</button>
-        <button class="btn" id="shop-btn" style="border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); font-size: 1.2rem; padding: 15px 40px;" data-testid="button-shop">SKIN SHOP</button>
-        <div style="margin-top: 10px;">
-            <button id="rewarded-ad-btn" style="background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #ffd700; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Get 500 BITS (AD)</button>
+        
+        <div class="menu-buttons">
+            <button class="btn btn-primary" id="start-btn" data-testid="button-start">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                START DASH
+            </button>
+            <button class="btn btn-secondary" id="shop-btn" data-testid="button-shop">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                SKIN SHOP
+            </button>
+            <button class="btn btn-accent" id="rewarded-ad-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                GET 500 BITS (AD)
+            </button>
         </div>
+
         <div class="instructions">
             <strong>PC:</strong> ARROW KEYS or WASD to navigate<br>
             <strong>MOBILE:</strong> USE ON-SCREEN BUTTONS
@@ -352,13 +457,24 @@
 
     <!-- Game Over Screen -->
     <div id="game-over-screen" class="ui-layer hidden">
-        <h1 style="color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink);">SYSTEM CRASH</h1>
-        <div id="final-score" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--neon-blue); font-weight: 900;">0</div>
-        <div id="new-best" style="color: var(--neon-pink); margin-bottom: 2rem; font-weight: bold; letter-spacing: 2px;" class="hidden">NEW RECORD!</div>
-        <div id="revive-container" style="margin-bottom: 1rem;">
-            <button class="btn" id="revive-btn" style="border-color: #ffd700; background: rgba(255, 215, 0, 0.1); color: #ffd700; font-size: 1.2rem; padding: 15px 30px;" data-testid="button-revive">REVIVE (WATCH AD)</button>
+        <h1 style="color: var(--neon-pink); text-shadow: 0 0 20px var(--neon-pink); margin-bottom: 0;">SYSTEM CRASH</h1>
+        <div class="subtitle" style="margin-bottom: 2rem;">Connection Terminated</div>
+        
+        <div id="final-score" style="font-size: 3.5rem; margin-bottom: 0.5rem; color: var(--neon-blue); font-weight: 900; text-shadow: 0 0 20px var(--neon-blue);">0</div>
+        <div id="new-best" style="color: #ffd700; margin-bottom: 2.5rem; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px #ffd700;" class="hidden">NEW RECORD DETECTED</div>
+        
+        <div class="menu-buttons">
+            <div id="revive-container" style="width: 100%;">
+                <button class="btn btn-accent" id="revive-btn" data-testid="button-revive">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                    REVIVE (WATCH AD)
+                </button>
+            </div>
+            <button class="btn btn-primary" id="restart-btn" data-testid="button-restart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                REBOOT SYSTEM
+            </button>
         </div>
-        <button class="btn" id="restart-btn" data-testid="button-restart">REBOOT</button>
     </div>
 
     <!-- Shop Screen -->
