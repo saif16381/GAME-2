@@ -236,6 +236,7 @@
         <div class="stats-group">
             <div class="score-display" id="score-text">0</div>
             <div class="high-score-display" id="high-score-text">BEST: 0</div>
+            <div class="score-display" id="currency-text" style="color: #ffd700; text-shadow: 0 0 10px #ffd700; font-size: 1.2rem;">BITS: 0</div>
         </div>
         <div class="multiplier-display" id="multiplier-text">LEVEL 1</div>
     </div>
@@ -328,6 +329,7 @@ const Game = (() => {
     const scoreText = document.getElementById('score-text');
     const highScoreText = document.getElementById('high-score-text');
     const multiplierText = document.getElementById('multiplier-text');
+    const currencyText = document.getElementById('currency-text');
     const startScreen = document.getElementById('start-screen');
     const gameOverScreen = document.getElementById('game-over-screen');
     const finalScoreDisplay = document.getElementById('final-score');
@@ -335,6 +337,7 @@ const Game = (() => {
 
     let state = 'MENU';
     let score = 0;
+    let currency = parseInt(localStorage.getItem('neon_nexus_currency') || '0');
     let highScore = parseInt(localStorage.getItem('neon_nexus_high_score') || '0');
     let level = 1;
     let speed = 7;
@@ -369,6 +372,7 @@ const Game = (() => {
             player.height = 44;
         }
         highScoreText.innerText = `BEST: ${Math.floor(highScore)}`;
+        currencyText.innerText = `BITS: ${currency}`;
     };
 
     window.addEventListener('resize', resize);
@@ -530,6 +534,9 @@ const Game = (() => {
             if (!o.passed && o.y > player.y) {
                 o.passed = true;
                 score += 100 * level;
+                currency += 5 * level;
+                localStorage.setItem('neon_nexus_currency', currency.toString());
+                currencyText.innerText = `BITS: ${currency}`;
                 AudioEngine.playScore();
             }
 
