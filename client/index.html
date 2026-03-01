@@ -647,16 +647,16 @@ const Game = (() => {
         player.trail.forEach(t => t.life -= 0.1);
 
         // Difficulty Progression
-        if (frame % 800 === 0) {
+        if (frame % 400 === 0) {
             level++;
-            speed += 1.0;
+            speed += 1.5;
             AudioEngine.playLevelUp();
             multiplierText.innerText = `LEVEL ${level}`;
             shake = 10;
         }
 
         // Obstacles
-        const spawnRate = Math.max(12, 45 - (level * 2));
+        const spawnRate = Math.max(8, 35 - (level * 3));
         if (frame % spawnRate === 0) {
             createObstacle();
         }
