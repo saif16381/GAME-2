@@ -579,20 +579,24 @@ const Game = (() => {
 
         // Trail
         player.trail.forEach(t => {
+            const radius = (player.width / 2) * t.life;
+            if (radius <= 0) return;
             ctx.globalAlpha = t.life * 0.4;
             ctx.fillStyle = player.color;
             ctx.beginPath();
-            ctx.arc(t.x, t.y, (player.width/2) * t.life, 0, Math.PI*2);
+            ctx.arc(t.x, t.y, radius, 0, Math.PI * 2);
             ctx.fill();
         });
         ctx.globalAlpha = 1.0;
 
         // Draw Particles
         particles.forEach(p => {
+            const radius = p.size * p.life;
+            if (radius <= 0) return;
             ctx.fillStyle = p.color;
             ctx.globalAlpha = p.life;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
             ctx.fill();
         });
         ctx.globalAlpha = 1.0;
