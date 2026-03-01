@@ -326,12 +326,24 @@
         </div>
     </div>
 
+    <!-- Ads UI -->
+    <div id="ad-container" class="ui-layer hidden" style="z-index: 100;">
+        <div style="background: var(--bg-dark); padding: 40px; border: 2px solid var(--neon-blue); border-radius: 15px; text-align: center; box-shadow: 0 0 30px var(--neon-blue);">
+            <h2 id="ad-title" style="color: var(--neon-blue); margin-bottom: 20px; letter-spacing: 5px;">COMMERCIAL BREAK</h2>
+            <div id="ad-timer" style="font-size: 3rem; font-weight: 900; margin-bottom: 20px;">5</div>
+            <p id="ad-status" style="color: rgba(255,255,255,0.6);">Loading secure transmission...</p>
+        </div>
+    </div>
+
     <!-- Start Screen -->
     <div id="start-screen" class="ui-layer">
         <h1>NEON NEXUS</h1>
         <div class="subtitle">Cyber Dash Protocol</div>
         <button class="btn" id="start-btn" data-testid="button-start">START DASH</button>
         <button class="btn" id="shop-btn" style="border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.1); font-size: 1.2rem; padding: 15px 40px;" data-testid="button-shop">SKIN SHOP</button>
+        <div style="margin-top: 10px;">
+            <button id="rewarded-ad-btn" style="background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #ffd700; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Get 500 BITS (AD)</button>
+        </div>
         <div class="instructions">
             <strong>PC:</strong> ARROW KEYS or WASD to navigate<br>
             <strong>MOBILE:</strong> USE ON-SCREEN BUTTONS
@@ -366,7 +378,7 @@
  * NEON NEXUS: CYBER DASH
  */
 
-// --- UTILITIES & AUDIO ---
+// --- AUDIO ENGINE ---
 const AudioEngine = (() => {
     let audioCtx = null;
     
@@ -407,6 +419,45 @@ const AudioEngine = (() => {
             setTimeout(() => playTone(659.25, 0.1), 100);
             setTimeout(() => playTone(783.99, 0.2), 200);
         }
+    };
+})();
+
+// --- ADS SYSTEM ---
+const AdsSystem = (() => {
+    const adContainer = document.getElementById('ad-container');
+    const adTimer = document.getElementById('ad-timer');
+    const adStatus = document.getElementById('ad-status');
+    const adTitle = document.getElementById('ad-title');
+    
+    let isAdPlaying = false;
+
+    const showAd = (type, callback) => {
+        if (isAdPlaying) return;
+        isAdPlaying = true;
+        
+        adContainer.classList.remove('hidden');
+        adTitle.innerText = type === 'rewarded' ? 'REWARDED DATA STREAM' : 'COMMERCIAL BREAK';
+        adStatus.innerText = 'Initializing...';
+        
+        let timeLeft = 5;
+        adTimer.innerText = timeLeft;
+
+        const interval = setInterval(() => {
+            timeLeft--;
+            adTimer.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                adContainer.classList.add('hidden');
+                isAdPlaying = false;
+                if (callback) callback();
+            }
+        }, 1000);
+    };
+
+    return {
+        showInterstitial: (callback) => showAd('interstitial', callback),
+        showRewarded: (callback) => showAd('rewarded', callback),
+        isAdPlaying: () => isAdPlaying
     };
 })();
 
@@ -638,8 +689,17 @@ const Game = (() => {
                     newBestLabel.classList.remove('hidden');
                 }
                 
-                gameOverScreen.classList.remove('hidden');
-                finalScoreDisplay.innerText = Math.floor(score);
+                const showGameOver = () => {
+                    gameOverScreen.classList.remove('hidden');
+                    finalScoreDisplay.innerText = Math.floor(score);
+                };
+
+                const adChance = Math.random();
+                if (adChance < 0.3) { // 30% chance for interstitial on game over
+                    AdsSystem.showInterstitial(showGameOver);
+                } else {
+                    showGameOver();
+                }
                 return;
             }
 
@@ -828,8 +888,24 @@ const Game = (() => {
         });
     };
 
+    const initAds = () => {
+        const rewardBtn = document.getElementById('rewarded-ad-btn');
+        rewardBtn.onclick = () => {
+            AdsSystem.showRewarded(() => {
+                currency += 500;
+                localStorage.setItem('neon_nexus_currency', currency.toString());
+                currencyText.innerText = `BITS: ${currency}`;
+                if (state === 'SHOP') {
+                    renderShop();
+                }
+                AudioEngine.playLevelUp();
+            });
+        };
+    };
+
     return { init: () => {
         draw();
+        initAds();
         document.getElementById('start-btn').onclick = reset;
         document.getElementById('restart-btn').onclick = reset;
         document.getElementById('shop-btn').onclick = openShop;
