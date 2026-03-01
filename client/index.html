@@ -459,7 +459,7 @@ const Game = (() => {
         if (shake > 0) shake *= 0.9;
         
         // Player Movement
-        const moveAcc = canvas.width < 500 ? 1.8 : 2.5;
+        const moveAcc = canvas.width < 500 ? 4.5 : 6.0;
         const friction = 0.85;
         
         let dx = 0;
@@ -470,7 +470,7 @@ const Game = (() => {
         player.targetX = Math.max(player.width/2, Math.min(canvas.width - player.width/2, player.targetX));
         
         // Smooth lerping with momentum
-        player.x += (player.targetX - player.x) * 0.2;
+        player.x += (player.targetX - player.x) * 0.35;
 
         // Trail effect
         if (frame % 2 === 0) {
